@@ -66,7 +66,12 @@ const updateUserInfo = (req, res) => {
       }
       res.send(updatedUser);
     })
-    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
+      }
+      res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' });
+    });
 };
 
 // обновление аватара

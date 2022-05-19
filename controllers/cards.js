@@ -88,13 +88,13 @@ const deleteLikeTheCard = (req, res) => card.findByIdAndUpdate(
 )
   .then((like) => {
     if (!like) {
-      return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
+      return res.status(ERROR_CODE_404).send({ message: 'Переданы некорректные данные' });
     }
     res.status(200).send({ data: like });
   })
   .catch((err) => {
     if (err.name === 'CastError') {
-      return res.status(ERROR_CODE_400).send({ message: 'id не существует' });
+      return res.status(ERROR_CODE_404).send({ message: 'id не существует' });
     }
     return res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' });
   });
