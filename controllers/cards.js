@@ -67,10 +67,10 @@ const putLikeTheCard = (req, res) => {
     { new: true },
   )
     .then((like) => {
-      if (!req.user._id) {
+      if (!like) {
         return res.status(ERROR_CODE_404).send({ message: 'Карточка не найдена' });
       }
-      res.status(200).send(like);
+      res.status(200).send({ data: like });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -87,10 +87,10 @@ const deleteLikeTheCard = (req, res) => card.findByIdAndUpdate(
   { new: true },
 )
   .then((like) => {
-    if (!req.user._id) {
+    if (!like) {
       return res.status(ERROR_CODE_404).send({ message: 'Переданы некорректные данные' });
     }
-    res.status(200).send(like);
+    res.status(200).send({ data: like });
   })
   .catch((err) => {
     if (err.name === 'CastError') {

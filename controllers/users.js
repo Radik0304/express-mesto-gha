@@ -73,9 +73,9 @@ const updateUserInfo = (req, res) => {
 const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   user.findByIdAndUpdate(req.user._id, { avatar })
-    .then(() => {
-      if (!avatar) {
-        return res.status(ERROR_CODE_400).send('Переданы некорректные данные');
+    .then((userAvatar) => {
+      if (!userAvatar) {
+        return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
       }
       res.send({ data: avatar });
     })
