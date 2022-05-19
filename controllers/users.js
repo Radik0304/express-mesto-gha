@@ -59,9 +59,9 @@ const getUsers = (_, res) => {
 // обновление профиля
 const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
-  user.findByIdAndUpdate(req.user._id, { name, about })
+  user.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((updatedUser) => {
-      if (!name || !about) {
+      if (!updatedUser) {
         return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
       }
       res.send(updatedUser);
@@ -72,7 +72,7 @@ const updateUserInfo = (req, res) => {
 // обновление аватара
 const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
-  user.findByIdAndUpdate(req.user._id, { avatar })
+  user.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((userAvatar) => {
       if (!userAvatar) {
         return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
