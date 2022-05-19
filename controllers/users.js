@@ -37,7 +37,12 @@ const createUser = (req, res) => {
     .then((newUser) => {
       res.status(201).send(newUser);
     })
-    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' }));
+    .catch(((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
+      }
+      res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' });
+    }));
 };
 
 // получение всех пользователей
@@ -59,7 +64,7 @@ const updateUserInfo = (req, res) => {
       if (!name || !about) {
         return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
       }
-      res.send({ message: `'Информация успешно обновлена name: ${name}, about: ${about}'` });
+      res.send({ message: 'Информация успешно обновлена' });
     })
     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' }));
 };
@@ -72,7 +77,7 @@ const updateUserAvatar = (req, res) => {
       if (!avatar) {
         return res.status(ERROR_CODE_400).send('Переданы некорректные данные');
       }
-      res.send({ message: 'Аватар успешно обновлен' });
+      res.send({ data: avatar });
     })
     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' }));
 };
