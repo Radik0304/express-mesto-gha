@@ -11,7 +11,7 @@ const { PORT = 3000 } = process.env;
 
 // подключаем роуты пользователей
 
-app.use((req, res, next) => {
+app.use((req, _, next) => {
   req.user = {
     _id: '62853390cf2006abc99f8e79',
   };

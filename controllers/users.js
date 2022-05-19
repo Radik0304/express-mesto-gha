@@ -1,22 +1,27 @@
-const res = require('express/lib/response');
+/* eslint-disable consistent-return */
 const user = require('../models/user');
+
+// коды ошибок
+const ERROR_CODE_400 = 400;
+const ERROR_CODE_404 = 404;
+const ERROR_CODE_500 = 500;
 
 // получение одного пользователя
 const getUser = (req, res) => {
-  const id= req.params.id;
-  user.findById(id)
-    .then(user => {
-      if (!user) {
-        res.status(404).send({ message: 'Пользователь не найден' });
+  // const { id } = req.params.id;
+  user.findById(req.params.id)
+    .then((oneUser) => {
+      if (!oneUser) {
+        res.status(ERROR_CODE_404).send({ message: 'Пользователь не найден' });
         return;
       }
-      res.status(200).send(user);
+      res.status(200).send(oneUser);
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        return res.status(400).send({ message: 'Введенный id некоректен' });
+        return res.status(ERROR_CODE_400).send({ message: 'Введенный id некоректен' });
       }
-      return res.status(500).send({ message: 'Серверная ошибка' });
+      return res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' });
     });
 };
 
@@ -25,24 +30,24 @@ const createUser = (req, res) => {
   // console.log('req.body', req.body);
   const { name, about, avatar } = req.body;
   if (!name || !about || !avatar) {
-    return res.status(400).send({ message: 'Переданы некорректные данные' });
+    return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
   }
 
   user.create({ name, about, avatar })
-    .then(user => {
-      res.status(201).send(user);
+    .then((newUser) => {
+      res.status(201).send(newUser);
     })
-    .catch(() => res.status(500).send({ message: 'Серверная ошибка' }));
+    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' }));
 };
 
 // получение всех пользователей
 const getUsers = (_, res) => {
   user.find({})
-    .then(users => {
-      res.status(200).send(users);
+    .then((allUsers) => {
+      res.status(200).send(allUsers);
     })
     .catch(() => {
-      res.status(500).send({ message: 'Серверная ошибка' });
+      res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' });
     });
 };
 
@@ -52,11 +57,11 @@ const updateUserInfo = (req, res) => {
   user.findByIdAndUpdate(req.user._id, { name, about })
     .then(() => {
       if (!name || !about) {
-        return res.status(400).send('Переданы некорректные данные');
+        return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
       }
-      res.send({ message: 'Информация успешно обновлена' });
+      res.send({ message: `'Информация успешно обновлена name: ${name}, about: ${about}'` });
     })
-    .catch(() => res.status(500).send({ message: 'Серверная ошибка' }));
+    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' }));
 };
 
 // обновление аватара
@@ -65,11 +70,11 @@ const updateUserAvatar = (req, res) => {
   user.findByIdAndUpdate(req.user._id, { avatar })
     .then(() => {
       if (!avatar) {
-        return res.status(400).send('Переданы некорректные данные');
+        return res.status(ERROR_CODE_400).send('Переданы некорректные данные');
       }
       res.send({ message: 'Аватар успешно обновлен' });
     })
-    .catch(() => res.status(500).send({ message: 'Серверная ошибка' }));
+    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' }));
 };
 
 module.exports = {
