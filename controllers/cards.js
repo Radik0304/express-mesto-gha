@@ -19,7 +19,7 @@ const deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        return res.status(ERROR_CODE_404).send({ message: 'Карточка не найдена' });
+        return res.status(ERROR_CODE_400).send({ message: 'Карточка не найдена' });
       }
       return res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' });
     });
@@ -70,7 +70,7 @@ const putLikeTheCard = (req, res) => {
       if (!like) {
         return res.status(ERROR_CODE_404).send({ message: 'Карточка не найдена' });
       }
-      res.status(200).send({ data: like });
+      res.status(200).send(like);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -88,7 +88,7 @@ const deleteLikeTheCard = (req, res) => card.findByIdAndUpdate(
 )
   .then((like) => {
     if (!like) {
-      return res.status(ERROR_CODE_404).send({ message: 'Переданы некорректные данные' });
+      return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
     }
     res.status(200).send({ data: like });
   })

@@ -60,11 +60,11 @@ const getUsers = (_, res) => {
 const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   user.findByIdAndUpdate(req.user._id, { name, about })
-    .then(() => {
+    .then((updatedUser) => {
       if (!name || !about) {
         return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
       }
-      res.send({ message: 'Информация успешно обновлена' });
+      res.send(updatedUser);
     })
     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' }));
 };
@@ -77,7 +77,7 @@ const updateUserAvatar = (req, res) => {
       if (!userAvatar) {
         return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
       }
-      res.send({ data: avatar });
+      res.send(userAvatar);
     })
     .catch(() => res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' }));
 };
