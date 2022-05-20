@@ -1,10 +1,11 @@
 /* eslint-disable consistent-return */
 const user = require('../models/user');
 
-// коды ошибок
-const ERROR_CODE_400 = 400;
-const ERROR_CODE_404 = 404;
-const ERROR_CODE_500 = 500;
+const {
+  ERROR_CODE_400,
+  ERROR_CODE_404,
+  ERROR_CODE_500,
+} = require('../utils/constants');
 
 // получение одного пользователя
 const getUser = (req, res) => {
@@ -62,7 +63,7 @@ const updateUserInfo = (req, res) => {
   user.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((updatedUser) => {
       if (!updatedUser) {
-        return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
+        return res.status(ERROR_CODE_404).send({ message: 'Пользователь отсутствует' });
       }
       res.send(updatedUser);
     })
@@ -80,11 +81,16 @@ const updateUserAvatar = (req, res) => {
   user.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((userAvatar) => {
       if (!userAvatar) {
-        return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
+        return res.status(ERROR_CODE_404).send({ message: 'Пользователь отсутствует' });
       }
       res.send(userAvatar);
     })
-    .catch(() => res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
+      }
+      res.status(ERROR_CODE_500).send({ message: 'Серверная ошибка' });
+    });
 };
 
 module.exports = {

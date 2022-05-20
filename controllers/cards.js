@@ -1,10 +1,11 @@
 /* eslint-disable consistent-return */
 const card = require('../models/card');
 
-// коды ошибок
-const ERROR_CODE_400 = 400;
-const ERROR_CODE_404 = 404;
-const ERROR_CODE_500 = 500;
+const {
+  ERROR_CODE_400,
+  ERROR_CODE_404,
+  ERROR_CODE_500,
+} = require('../utils/constants');
 
 // удаление карточки
 const deleteCard = (req, res) => {

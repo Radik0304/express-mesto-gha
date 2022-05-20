@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/Radik0304/express-mesto-gha.git"
   },
-  "author": "",
+  "author": "Radik Tarzemanov",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Radik0304/express-mesto-gha/issues"
