@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { userRouter } = require('./routes/users');
 const { cardRouter } = require('./routes/cards');
+const { createUser, login } = require('./controllers/users');
+const { auth } = require('./middlewares/auth');
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -9,6 +11,15 @@ const app = express();
 app.use(express.json());
 const { PORT = 3000 } = process.env;
 const ERROR_CODE_404 = 404;
+
+// логин
+app.post('/signin', login);
+
+// регистрация
+app.post('/signup', createUser);
+
+// ставим защиту авторизацией
+app.use(auth);
 
 // подключаем роуты пользователей
 app.use((req, _, next) => {

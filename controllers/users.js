@@ -1,4 +1,6 @@
 /* eslint-disable consistent-return */
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const user = require('../models/user');
 
 const {
@@ -26,17 +28,39 @@ const getUser = (req, res) => {
     });
 };
 
+// получение информации о текущем пользователе
+const getCurrentUser = (req, res, next) => {
+  user.findById(req.user._id)
+    .then((userMe) => {
+      res.send({ data: userMe });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 // создание нового пользователя
 const createUser = (req, res) => {
   // console.log('req.body', req.body);
-  const { name, about, avatar } = req.body;
-  if (!name || !about || !avatar) {
-    return res.status(ERROR_CODE_400).send({ message: 'Переданы некорректные данные' });
-  }
+  const {
+    name,
+    about,
+    avatar,
+    email,
+  } = req.body;
 
-  user.create({ name, about, avatar })
-    .then((newUser) => {
-      res.status(201).send(newUser);
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => {
+      user.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      });
+    })
+    .then(() => {
+      res.status(201).send({ message: 'fuck' });
     })
     .catch(((err) => {
       if (err.name === 'ValidationError') {
@@ -93,10 +117,28 @@ const updateUserAvatar = (req, res) => {
     });
 };
 
+// логин пользователя
+const login = (req, res) => {
+  const { email, password } = req.body;
+  return user.findUserByCredentials(email, password)
+    .then((userAuth) => {
+      const token = jwt.sign({ id: userAuth._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.cookie('jwt', token, {
+        maxAge: 604800000,
+        httpOnly: true,
+      }).send({ data: token });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
+};
+
 module.exports = {
   updateUserAvatar,
   updateUserInfo,
   getUser,
   getUsers,
   createUser,
+  login,
+  getCurrentUser,
 };
